@@ -6,8 +6,10 @@ script_name <- "SuppFigure_Baseline_12mo_Shift"
 saved_title <- get_figure_label(script_name)
 
 bl_fu1 <- subset(adivs, Project_Timepoint %in% c("Baseline", "Month 12")) %>%
-  pivot_longer(cols = diversity$metric) %>% 
-  mutate(name = factor(name, levels = diversity$metric, labels = diversity$name))
+  pivot_longer(cols = diversity$metric) %>%
+  mutate(
+    name = factor(name, levels = diversity$metric, labels = diversity$name)
+  )
 
 stats <- bl_fu1 %>%
   group_by(name) %>%
@@ -22,7 +24,12 @@ stats <- bl_fu1 %>%
 
 panelA <- ggplot(
   bl_fu1,
-  aes(x = Project_Timepoint, y = value, fill = Project_Timepoint, shape = Project_Timepoint)
+  aes(
+    x = Project_Timepoint,
+    y = value,
+    fill = Project_Timepoint,
+    shape = Project_Timepoint
+  )
 ) +
   geom_boxplot(outliers = F) +
   geom_line(aes(group = subjectID)) +
@@ -37,10 +44,14 @@ panelA <- ggplot(
   ) +
   theme(legend.position = "top") +
   scale_fill_manual(values = colors$time) +
-  scale_shape_manual(values= shapes$time) + 
+  scale_shape_manual(values = shapes$time) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  labs(x = "Project Timepoint", y = "Alpha Diversity Value",
-       fill = "Project Timepoint", shape = "Project Timepoint")
+  labs(
+    x = "Project Timepoint",
+    y = "Alpha Diversity Value",
+    fill = "Project Timepoint",
+    shape = "Project Timepoint"
+  )
 
 ## Panel B: beta diversity (keep all matrices or select?)
 
@@ -107,21 +118,33 @@ wuf_perm <- vegan::adonis2(
 )
 
 plt_func <- function(ordination, perm_result, title) {
-  ggplot(ordination$plot@data, aes(x=PCo1, y = PCo2, fill = Project_Timepoint, shape = Project_Timepoint)) +
-    geom_line(aes(group = subjectID), color="grey50") +
+  ggplot(
+    ordination$plot@data,
+    aes(x = PCo1, y = PCo2, fill = Project_Timepoint, shape = Project_Timepoint)
+  ) +
+    geom_line(aes(group = subjectID), color = "grey50") +
     geom_point(size = 3) +
     stat_ellipse(aes(color = Project_Timepoint), level = 0.2) +
     scale_shape_manual(values = shapes$time) +
     scale_fill_manual(values = colors$time) +
     scale_color_manual(values = colors$time) +
-    labs(x = ordination$plot@labels$x,
-         y = ordination$plot@labels$y,
-         fill = "Project Timepoint",
-         shape = "Project Timepoint",
-         color = "Project Timepoint") +
-    ggtitle(title, 
-            subtitle=paste0("R^2^ = ", round(perm_result$R2[1],3), "; P = ", perm_result$`Pr(>F)`[1])) +
-    theme(plot.subtitle=element_markdown())
+    labs(
+      x = ordination$plot@labels$x,
+      y = ordination$plot@labels$y,
+      fill = "Project Timepoint",
+      shape = "Project Timepoint",
+      color = "Project Timepoint"
+    ) +
+    ggtitle(
+      title,
+      subtitle = paste0(
+        "R^2^ = ",
+        round(perm_result$R2[1], 3),
+        "; P = ",
+        perm_result$`Pr(>F)`[1]
+      )
+    ) +
+    theme(plot.subtitle = element_markdown())
 }
 
 panelB <- ggpubr::ggarrange(
@@ -135,10 +158,18 @@ panelB <- ggpubr::ggarrange(
 )
 
 
-full_plot <- ggpubr::ggarrange(panelA, 
-                               panelB, 
-                               ncol = 1, 
-                               heights = c(1, 1.3),
-                               labels = c("A","B"),
-                               common.legend = TRUE)
-ggsave(paste0(fig_loc, saved_title, ".pdf"), full_plot, height = 9, width = 7, dpi = 300)
+full_plot <- ggpubr::ggarrange(
+  panelA,
+  panelB,
+  ncol = 1,
+  heights = c(1, 1.3),
+  labels = c("A", "B"),
+  common.legend = TRUE
+)
+ggsave(
+  paste0(fig_loc, saved_title, ".pdf"),
+  full_plot,
+  height = 9,
+  width = 7,
+  dpi = 300
+)

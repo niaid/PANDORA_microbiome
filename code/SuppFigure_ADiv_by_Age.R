@@ -6,13 +6,15 @@ script_name <- "SuppFigure_ADiv_by_Age"
 saved_title <- get_figure_label(script_name)
 
 bl_fu1 <- subset(adivs, Project_Timepoint %in% c("Baseline", "Month 2")) %>%
-  pivot_longer(cols = diversity$metric) %>% 
-  mutate(name = factor(name, levels = diversity$metric, labels = diversity$name))
+  pivot_longer(cols = diversity$metric) %>%
+  mutate(
+    name = factor(name, levels = diversity$metric, labels = diversity$name)
+  )
 
 stats <- bl_fu1 %>%
   group_by(name, median_Age) %>%
   do(broom.mixed::tidy(
-    lmer(value ~ Project_Timepoint + (1|subjectID), data = .),
+    lmer(value ~ Project_Timepoint + (1 | subjectID), data = .),
     effect = "fixed"
   )) %>%
   filter(!term %in% "(Intercept)") %>%
@@ -23,7 +25,7 @@ stats <- bl_fu1 %>%
 int_stats <- bl_fu1 %>%
   group_by(name) %>%
   do(broom.mixed::tidy(
-    lmer(value ~ Project_Timepoint * median_Age+ (1|subjectID), data = .),
+    lmer(value ~ Project_Timepoint * median_Age + (1 | subjectID), data = .),
     effect = "fixed"
   )) %>%
   filter(grepl(":", term)) %>%
@@ -34,7 +36,12 @@ int_stats <- bl_fu1 %>%
 
 panelA <- ggplot(
   bl_fu1,
-  aes(x = median_Age, y = value, fill = Project_Timepoint, shape = Project_Timepoint)
+  aes(
+    x = median_Age,
+    y = value,
+    fill = Project_Timepoint,
+    shape = Project_Timepoint
+  )
 ) +
   geom_boxplot(outliers = F) +
   geom_point(position = position_jitterdodge()) +
@@ -51,13 +58,18 @@ panelA <- ggplot(
     aes(x = 1.5, y = Inf, label = sig_test),
     vjust = 1.75,
     size = 3,
-    inherit.aes = F) +
+    inherit.aes = F
+  ) +
   theme(legend.position = "top") +
   scale_fill_manual(values = colors$time) +
-  scale_shape_manual(values= shapes$time) + 
+  scale_shape_manual(values = shapes$time) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
-  labs(x = "Median Age", y = "Alpha Diversity Value",
-       fill = "Project Timepoint", shape = "Project Timepoint")
+  labs(
+    x = "Median Age",
+    y = "Alpha Diversity Value",
+    fill = "Project Timepoint",
+    shape = "Project Timepoint"
+  )
 
 ggsave(
   panelA,

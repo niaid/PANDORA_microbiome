@@ -8,7 +8,9 @@ saved_title <- get_figure_label(script_name)
 
 adivs_bl <- subset(adivs, Project_Timepoint %in% c("Month 12")) %>%
   pivot_longer(cols = diversity$metric) %>%
-  mutate(name = factor(name, levels = diversity$metric, labels = diversity$name))
+  mutate(
+    name = factor(name, levels = diversity$metric, labels = diversity$name)
+  )
 
 stats <- adivs_bl %>%
   group_by(name) %>%
@@ -18,7 +20,10 @@ stats <- adivs_bl %>%
     sig_test = paste0("Est = ", round(estimate, 2), "\nP = ", round(p.value, 2))
   )
 
-panelA <- ggplot(adivs_bl, aes(x = Integrase_yr1, y = value, fill = Integrase_yr1, shape = Integrase_yr1)) +
+panelA <- ggplot(
+  adivs_bl,
+  aes(x = Integrase_yr1, y = value, fill = Integrase_yr1, shape = Integrase_yr1)
+) +
   geom_boxplot(outliers = F) +
   geom_point() +
   facet_wrap(~name, scales = "free_y", nrow = 1) +
@@ -29,12 +34,16 @@ panelA <- ggplot(adivs_bl, aes(x = Integrase_yr1, y = value, fill = Integrase_yr
     size = 3,
     inherit.aes = F
   ) +
-  theme(legend.position = "top") + 
+  theme(legend.position = "top") +
   scale_fill_manual(values = colors$integ) +
-  scale_shape_manual(values= shapes$iris) + 
-  scale_y_continuous(expand = expansion(mult = c(0.05, 0.15))) + 
-  labs(x = "Integrase in Year 1", y = "Alpha Diversity Value", 
-       fill = "Integrase in Year 1", shape = "Integrase in Year 1")
+  scale_shape_manual(values = shapes$iris) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.15))) +
+  labs(
+    x = "Integrase in Year 1",
+    y = "Alpha Diversity Value",
+    fill = "Integrase in Year 1",
+    shape = "Integrase in Year 1"
+  )
 
 ## Panel B: beta diversity (keep all matrices or select?)
 
@@ -98,20 +107,32 @@ wuf_perm <- vegan::adonis2(
 )
 
 plt_func <- function(ordination, perm_result, title) {
-  ggplot(ordination$plot@data, aes(x=PCo1, y = PCo2, fill = Integrase_yr1, shape = Integrase_yr1)) +
+  ggplot(
+    ordination$plot@data,
+    aes(x = PCo1, y = PCo2, fill = Integrase_yr1, shape = Integrase_yr1)
+  ) +
     geom_point(size = 3) +
     stat_ellipse(aes(color = Integrase_yr1), level = 0.2) +
     scale_shape_manual(values = shapes$iris) +
     scale_fill_manual(values = colors$integ) +
     scale_color_manual(values = colors$integ) +
-    labs(x = ordination$plot@labels$x,
-         y = ordination$plot@labels$y,
-         fill = "Integrase in Year 1",
-         shape = "Integrase in Year 1",
-         color = "Integrase in Year 1") +
-    ggtitle(title, 
-            subtitle=paste0("R^2^ = ", round(perm_result$R2[1],3), "; P = ", perm_result$`Pr(>F)`[1])) +
-    theme(plot.subtitle=element_markdown())
+    labs(
+      x = ordination$plot@labels$x,
+      y = ordination$plot@labels$y,
+      fill = "Integrase in Year 1",
+      shape = "Integrase in Year 1",
+      color = "Integrase in Year 1"
+    ) +
+    ggtitle(
+      title,
+      subtitle = paste0(
+        "R^2^ = ",
+        round(perm_result$R2[1], 3),
+        "; P = ",
+        perm_result$`Pr(>F)`[1]
+      )
+    ) +
+    theme(plot.subtitle = element_markdown())
 }
 
 panelB <- ggpubr::ggarrange(
@@ -125,10 +146,18 @@ panelB <- ggpubr::ggarrange(
 )
 
 
-full_plot <- ggpubr::ggarrange(panelA, 
-                               panelB, 
-                               ncol = 1, 
-                               heights = c(1, 1.3),
-                               labels = c("A","B"),
-                               common.legend = TRUE)
-ggsave(paste0(fig_loc, saved_title, ".pdf"), full_plot, height = 9, width = 7, dpi = 300)
+full_plot <- ggpubr::ggarrange(
+  panelA,
+  panelB,
+  ncol = 1,
+  heights = c(1, 1.3),
+  labels = c("A", "B"),
+  common.legend = TRUE
+)
+ggsave(
+  paste0(fig_loc, saved_title, ".pdf"),
+  full_plot,
+  height = 9,
+  width = 7,
+  dpi = 300
+)

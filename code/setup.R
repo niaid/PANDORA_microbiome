@@ -17,23 +17,46 @@ phy <- readRDS(paste0(home, "data/proc/anly_data.rds"))
 
 ## likely need to identify some good colors:
 set1_col <- RColorBrewer::brewer.pal(8, "Set1")
-colors <- list(iris = c("0" = "cadetblue", "1" = "coral3"),
-               time = c("Baseline" = "#EB8A7B", "Month 2" = "#B88B84", "Month 12" = "#857775"),
-               age  = c("Younger" = "#bebada", "Older" = "#8dd3c7"),
-               integ = c("0" = "#fb8072", "1" = "#80b1d3"),
-               nnrti = c("0" = "#c65b76", "1" = "#5b76c6"),
-               myco = c("0" = "#4D4D4D", "1" = "#B2182B"))
+colors <- list(
+  iris = c("0" = "cadetblue", "1" = "coral3"),
+  time = c(
+    "Baseline" = "#EB8A7B",
+    "Month 2" = "#B88B84",
+    "Month 12" = "#857775"
+  ),
+  age = c("Younger" = "#bebada", "Older" = "#8dd3c7"),
+  integ = c("0" = "#fb8072", "1" = "#80b1d3"),
+  nnrti = c("0" = "#c65b76", "1" = "#5b76c6"),
+  myco = c("0" = "#4D4D4D", "1" = "#B2182B")
+)
 
-shapes <- list(iris = c("0" = 21, "1" = 23),
-               time = c("Baseline" = 21, "Month 2" = 22, "Month 12" = 23),
-               age  = c("Younger" = 21, "Older" = 22))
+shapes <- list(
+  iris = c("0" = 21, "1" = 23),
+  time = c("Baseline" = 21, "Month 2" = 22, "Month 12" = 23),
+  age = c("Younger" = 21, "Older" = 22)
+)
 
-diversity <- list(metric = c("Chao1", "Shannon", "Evenness", "PhyDiv"),
-                  name = c("Chao1 Richness","Shannon Diversity","Pielou's Evenness","Faith's\nPhylogenetic Diversity"))
+diversity <- list(
+  metric = c("Chao1", "Shannon", "Evenness", "PhyDiv"),
+  name = c(
+    "Chao1 Richness",
+    "Shannon Diversity",
+    "Pielou's Evenness",
+    "Faith's\nPhylogenetic Diversity"
+  )
+)
 
 ## requested addition of Inverse Simpson to Figure 1 only
-diversity2 <- list(metric = c("Chao1", "Shannon", "Evenness", "PhyDiv", "invSimpson"),
-                  name = c("Chao1 Richness","Shannon Diversity","Pielou's Evenness","Faith's\nPhylogenetic Diversity", "Inverse Simpson"))
+diversity2 <- list(
+  metric = c("Chao1", "Shannon", "Evenness", "PhyDiv", "invSimpson"),
+  name = c(
+    "Chao1 Richness",
+    "Shannon Diversity",
+    "Pielou's Evenness",
+    "Faith's\nPhylogenetic Diversity",
+    "Inverse Simpson"
+  )
+)
 
 ## Some variable clean-up was needed
 
@@ -78,15 +101,28 @@ sample_data <- readxl::read_xlsx(paste0(
   mutate(Any_IRIS = factor(Any_IRIS)) %>%
   mutate(Integrase_yr1 = factor(Integrase_yr1)) %>%
   mutate(NNRTI_yr1 = factor(NNRTI_yr1)) %>%
-  mutate(mycobacterial_infection = factor(mycobacterial_infection)) %>% 
+  mutate(mycobacterial_infection = factor(mycobacterial_infection)) %>%
   mutate(FU2_CD4 = as.numeric(FU2_CD4)) %>%
   mutate(FU2_BMI = as.numeric(FU2_BMI)) %>%
   mutate(WK0_BMI = as.numeric(WK0_BMI)) %>%
   mutate(WK0_CD4 = as.numeric(WK0_CD4)) %>%
   mutate(delta_BMI_FU2 = FU2_BMI - WK0_BMI) %>%
-  mutate(median_Age = ifelse(Enrollment_Age < median(Enrollment_Age[Project_Timepoint %in% "baseline"]), "Younger", "Older")) %>%
+  mutate(
+    median_Age = ifelse(
+      Enrollment_Age <
+        median(Enrollment_Age[Project_Timepoint %in% "baseline"]),
+      "Younger",
+      "Older"
+    )
+  ) %>%
   mutate(median_Age = factor(median_Age, levels = c("Younger", "Older"))) %>%
-  mutate(Project_Timepoint = factor(Project_Timepoint, labels = c("Baseline", "Month 2", "Month 12"), levels = c("baseline", "fu_1", "fu_2"))) %>%
+  mutate(
+    Project_Timepoint = factor(
+      Project_Timepoint,
+      labels = c("Baseline", "Month 2", "Month 12"),
+      levels = c("baseline", "fu_1", "fu_2")
+    )
+  ) %>%
   suppressWarnings()
 
 amp <- amp_load(
