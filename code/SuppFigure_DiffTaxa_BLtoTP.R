@@ -118,7 +118,13 @@ full_plot <- ggpubr::ggarrange(panelA,
 ggsave(paste0(fig_loc, saved_title[1], ".pdf"), full_plot, height = 9, width = 7, dpi = 300)
 
 ## publication columns for tables:
-res_bl_m2 <- res_bl_m2 %>% select(feature, value, coef, stderr, pval_joint, qval_joint, N, N_not_zero, Kingdom:Species)
-res_bl_m12 <- res_bl_m12 %>% select(feature, value, coef, stderr, pval_joint, qval_joint, N, N_not_zero, Kingdom:Species)
+res_bl_m2 <- res_bl_m2 %>% 
+  arrange(desc(qval_joint)) %>% 
+  select(feature, coef, stderr, pval_joint, qval_joint, N, N_not_zero, Kingdom:Species)
+names(res_bl_m2) <- diff_abund_table_names
+res_bl_m12 <- res_bl_m12 %>% 
+  arrange(desc(qval_joint)) %>%
+  select(feature, coef, stderr, pval_joint, qval_joint, N, N_not_zero, Kingdom:Species)
+names(res_bl_m12) <- diff_abund_table_names
 writexl::write_xlsx(list("Baseline to Month 2" = res_bl_m2), path = paste0(fig_loc, saved_title[2], ".xlsx"))
 writexl::write_xlsx(list("Baseline to Month 12" = res_bl_m12), path = paste0(fig_loc, saved_title[3], ".xlsx"))

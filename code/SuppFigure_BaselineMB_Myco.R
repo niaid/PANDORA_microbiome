@@ -129,6 +129,31 @@ panelB <- ggpubr::ggarrange(
   common.legend = T
 )
 
+## Differential Abundance
+
+run_maaslin_iris <- maaslin3(
+  input_data = amp_bl$abund,
+  input_metadata = amp_bl$metadata,
+  output = tempfile(),
+  fixed_effects = c("mycobacterial_infection"),
+  normalization = "NONE",
+  transform = "LOG",
+  standardize = FALSE,
+  min_prevalence = 0.1,
+  warn_prevalence = F,
+  plot_associations = FALSE,
+  plot_summary_plot = FALSE,
+  verbosity = "ERROR"
+)
+diff_abund_table <- left_join(
+  run_maaslin_iris$fit_data_abundance$results,
+  amp_bl$tax,
+  by = c("feature" = "OTU")
+) %>% select(feature, coef, stderr, 
+             pval_joint, qval_joint, N, 
+             N_not_zero, Kingdom:Species)
+
+names(diff_abund_table) <- diff_abund_table_names
 
 full_plot <- ggpubr::ggarrange(panelA, 
                                panelB, 
@@ -136,4 +161,5 @@ full_plot <- ggpubr::ggarrange(panelA,
                                heights = c(1, 1.3),
                                labels = c("A","B"),
                                common.legend = TRUE)
-ggsave(paste0(fig_loc, saved_title, ".pdf"), full_plot, height = 9, width = 8.5, dpi = 300)
+ggsave(paste0(fig_loc, saved_title[1], ".pdf"), full_plot, height = 9, width = 8.5, dpi = 300)
+writexl::write_xlsx(list("Mycobacterial Infection - BL" = diff_abund_table), path = paste0(fig_loc, saved_title[2], ".xlsx"))

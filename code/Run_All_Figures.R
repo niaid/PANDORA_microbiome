@@ -16,6 +16,9 @@ get_figure_label <- function(script_name) {
   return(label)
 }
 
+diff_abund_table_names <- c("ASV", "Coef","Std.Err.","P-value","Q-value",
+                            "N","non-Zero N","Kingdom","Phylum","Class","Order",
+                            "Family","Genus","Species")
 
 for (script in unique(figure_map$code)) {
   source(paste0(fig_loc, "code/", script, ".R"))
